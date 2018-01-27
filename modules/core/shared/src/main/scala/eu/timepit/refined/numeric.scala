@@ -40,6 +40,8 @@ object numeric extends NumericValidate with NumericInference {
   /** Predicate that checks if an integral value modulo `N` is `O`. */
   final case class Modulo[N, O](n: N, o: O)
 
+  final case class Prime()
+
   /** Predicate that checks if a numeric value is less than or equal to `N`. */
   type LessEqual[N] = Not[Greater[N]]
 
@@ -173,6 +175,35 @@ private[refined] trait NumericValidate {
       t => s"($t % ${wn.value} == ${to()})",
       Modulo(wn.value, wo.value)
     )
+
+  implicit def primeValidate[T](
+      implicit it: Integral[T]
+  ): Validate.Plain[T, Prime] = {
+    import it._
+    val _0 = it.zero
+    val _2 = it.fromInt(2)
+    val _3 = it.fromInt(3)
+    val _5 = it.fromInt(5)
+    val _6 = it.fromInt(6)
+
+    def isPrime(t: T): Boolean =
+      if (t < _2) false
+      else if (t <= _3) true
+      else if (((t % _2) equiv _0) ||
+               ((t % _3) equiv _0)) false
+      else {
+        var res = true
+        var i = _5
+        while (res && (i * i) <= t) {
+          if (((t % i) equiv _0) ||
+              ((t % (i + _2)) equiv _0)) res = false
+          i = i + _6
+        }
+        res
+      }
+
+    Validate.fromPredicate(isPrime, t => s"isPrime($t)", Prime())
+  }
 }
 
 private[refined] trait NumericInference {

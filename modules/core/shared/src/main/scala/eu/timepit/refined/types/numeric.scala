@@ -1,7 +1,7 @@
 package eu.timepit.refined.types
 
 import eu.timepit.refined.api.{Refined, RefinedTypeOps}
-import eu.timepit.refined.numeric.{Negative, NonNegative, NonPositive, Positive}
+import eu.timepit.refined.numeric.{Negative, NonNegative, NonPositive, Positive, Prime}
 
 /** Module for numeric refined types. */
 object numeric extends NumericTypes
@@ -27,6 +27,10 @@ trait NumericTypes {
   type NonPosInt = Int Refined NonPositive
 
   object NonPosInt extends RefinedTypeOps.Numeric[NonPosInt, Int]
+
+  type PrimeInt = Int Refined Prime
+
+  object PrimeInt extends RefinedTypeOps.Numeric[PrimeInt, Int]
 
   /** A `Long` in the range from 1 to `Long.MaxValue`. */
   type PosLong = Long Refined Positive

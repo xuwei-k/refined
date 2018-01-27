@@ -2,7 +2,7 @@ package eu.timepit.refined.api
 
 import eu.timepit.refined.boolean.And
 import eu.timepit.refined.internal.Adjacent
-import eu.timepit.refined.numeric.{Greater, GreaterEqual, Less, LessEqual}
+import eu.timepit.refined.numeric.{Greater, GreaterEqual, Less, LessEqual, Prime}
 import shapeless.{Nat, Witness}
 import shapeless.ops.nat.ToInt
 
@@ -54,6 +54,12 @@ trait MinInstances extends LowPriorityMinInstances {
                                         adjacent: Adjacent[T]): Min[F[T, (L And R)]] =
     Min.instance(
       rt.unsafeWrap(findValid(ordering.max(rt.unwrap(leftMin.min), rt.unwrap(rightMin.min)))))
+
+  implicit def primeMin[F[_, _], T](
+      implicit rt: RefType[F],
+      it: Integral[T]
+  ): Min[F[T, Prime]] =
+    Min.instance(rt.unsafeWrap(it.fromInt(2)))
 }
 trait LowPriorityMinInstances {
   implicit def validateMin[F[_, _], T, P](implicit rt: RefType[F],
