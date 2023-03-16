@@ -170,8 +170,7 @@ lazy val core = myCrossProject("core")
           Seq()
         else
           Seq(
-            scalaOrganization.value % "scala-reflect" % scalaVersion.value,
-            scalaOrganization.value % "scala-compiler" % scalaVersion.value
+            scalaOrganization.value % "scala-reflect" % scalaVersion.value
           )
       ) ++ Seq(
         ("com.chuusai" %%% "shapeless" % shapelessVersion).cross(CrossVersion.for3Use2_13),
