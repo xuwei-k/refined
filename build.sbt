@@ -137,6 +137,9 @@ lazy val benchmark = project
   .enablePlugins(JmhPlugin)
   .disablePlugins(MimaPlugin)
   .settings(noPublishSettings)
+  .settings(
+    libraryDependencies += scalaOrganization.value % "scala-compiler" % scalaVersion.value
+  )
 
 lazy val cats = myCrossProject("cats")
   .dependsOn(core % "compile->compile;test->test", scalacheck % Test)
