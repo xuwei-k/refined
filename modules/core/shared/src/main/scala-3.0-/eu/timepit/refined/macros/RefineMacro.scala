@@ -3,8 +3,10 @@ package eu.timepit.refined.macros
 import eu.timepit.refined.api.{RefType, Validate}
 import eu.timepit.refined.char.{Digit, Letter, LowerCase, UpperCase, Whitespace}
 import eu.timepit.refined.collection.NonEmpty
-import eu.timepit.refined.internal.Resources
+import eu.timepit.refined.generic.Equal
+import eu.timepit.refined.internal.{Resources, WitnessAs}
 import eu.timepit.refined.numeric.{Negative, NonNegative, NonPositive, Positive}
+
 import scala.reflect.macros.blackbox
 
 class RefineMacro(val c: blackbox.Context) extends MacroUtils with LiteralMatchers {
@@ -40,17 +42,33 @@ class RefineMacro(val c: blackbox.Context) extends MacroUtils with LiteralMatche
   private def validateInstance[T, P](v: c.Expr[Validate[T, P]])(implicit
       T: c.WeakTypeTag[T],
       P: c.WeakTypeTag[P]
-  ): Validate[T, P] =
+  ): Validate[T, P] = {
+    val equalTypeCon = typeOf[Equal[?]].typeConstructor
     validateInstances
       .collectFirst {
         case (tpeT, instancesForT) if tpeT =:= T.tpe =>
-          instancesForT.collectFirst {
-            case (tpeP, validate) if tpeP =:= P.tpe =>
-              validate.asInstanceOf[Validate[T, P]]
-          }
+          instancesForT
+            .collectFirst {
+              case (tpeP, validate) if tpeP =:= P.tpe =>
+                validate.asInstanceOf[Validate[T, P]]
+            }
+            .orElse {
+              if (P.tpe.typeConstructor =:= equalTypeCon) {
+                P.tpe.typeArgs match {
+                  case List(ConstantType(Constant(x))) =>
+                    val w = WitnessAs(x, x.asInstanceOf[T])
+                    Some(Equal.equalValidate[T, Any](w).asInstanceOf[Validate[T, P]])
+                  case _ =>
+                    None
+                }
+              } else {
+                None
+              }
+            }
       }
       .flatten
       .getOrElse(eval(v))
+  }
 
   private val validateInstances: List[(Type, List[(Type, Any)])] = {
     def instance[T, P](implicit P: c.WeakTypeTag[P], v: Validate[T, P]): (Type, Validate[T, P]) =
