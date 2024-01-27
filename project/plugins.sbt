@@ -21,3 +21,5 @@ addSbtPlugin("org.scoverage" % "sbt-scoverage" % "2.0.9")
 addSbtPlugin("org.typelevel" % "sbt-typelevel-mergify" % "0.6.5")
 
 addSbtPlugin("pl.project13.scala" % "sbt-jmh" % "0.4.7")
+
+libraryDependencies += "ch.epfl.scala" %% "scalafix-core" % "0.11.1"

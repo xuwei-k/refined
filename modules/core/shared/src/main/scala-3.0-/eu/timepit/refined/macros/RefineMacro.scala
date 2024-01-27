@@ -43,6 +43,7 @@ class RefineMacro(val c: blackbox.Context) extends MacroUtils with LiteralMatche
       T: c.WeakTypeTag[T],
       P: c.WeakTypeTag[P]
   ): Validate[T, P] = {
+    println(v.tree)
     val equalTypeCon = typeOf[Equal[?]].typeConstructor
     validateInstances
       .collectFirst {

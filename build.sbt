@@ -184,6 +184,51 @@ lazy val core = myCrossProject("core")
   .enablePlugins(BuildInfoPlugin)
   .settings(moduleName := projectName)
   .settings(
+    Seq(Compile, Test).map { x =>
+      x / sourceGenerators ++= {
+        if (scalaBinaryVersion.value == "2.12") {
+          Seq(
+            task {
+              val dir = baseDirectory.value / ".." / "shared" / "src" / Defaults
+                .nameForSrc(x.name) / "scala-3.0+"
+              (dir ** "*.scala").get.map { src =>
+                val output = (x / sourceManaged).value / src.getName
+                val str = IO.read(src)
+                val input = scala.meta.Input.String(str)
+                val fixedSource = SingletonTypeCompat.fix(input)
+                if (fixedSource != str) {
+                  println(s"diff ! ${src.getCanonicalPath}")
+                  IO.withTemporaryDirectory { tmp =>
+                    val before = tmp / "before"
+                    val after = tmp / "after"
+                    IO.write(before, str)
+                    IO.write(after, fixedSource)
+                    /*
+                    sys.process
+                      .Process(
+                        Seq("diff", before.getCanonicalPath, after.getCanonicalPath),
+                        Some(tmp)
+                      )
+                      .!
+
+                     */
+                  }
+                  IO.write(output, fixedSource)
+                  Some(output)
+                } else {
+                  println(s"no diff ${src.getCanonicalPath}")
+                  None
+                }
+              }
+              Nil
+            }
+          )
+        } else {
+          Nil
+        }
+      }
+
+    },
     libraryDependencies ++= {
       macroParadise(Compile).value ++ (
         if (isScala3Setting.value)
