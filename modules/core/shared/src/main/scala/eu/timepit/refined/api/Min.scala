@@ -67,7 +67,7 @@ trait LowPriorityMinInstances {
   ): Min[F[T, P]] =
     Min.instance(rt.unsafeWrap(findValid(mt.min)))
 
-  protected def findValid[T, P](from: T)(implicit at: Adjacent[T], v: Validate[T, P]): T = {
+  protected inline def findValid[T, P](from: T)(implicit at: Adjacent[T], v: Validate[T, P]): T = {
     var result = from
     while (!v.isValid(result)) result = at.nextUpOrNone(result).get
     result

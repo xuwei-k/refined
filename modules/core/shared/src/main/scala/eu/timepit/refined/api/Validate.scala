@@ -15,7 +15,7 @@ trait Validate[T, P] extends Serializable {
 
   final type Res = Result[R]
 
-  def validate(t: T): Res
+  transparent inline def validate(t: T): Res
 
   /** Returns a string representation of this `[[Validate]]` using `t`. */
   def showExpr(t: T): String
@@ -24,11 +24,11 @@ trait Validate[T, P] extends Serializable {
     Resources.predicateResultDetailDot(r, showExpr(t))
 
   /** Checks if `t` satisfies the predicate `P`. */
-  final def isValid(t: T): Boolean =
+  transparent inline final def isValid(t: T): Boolean =
     validate(t).isPassed
 
   /** Checks if `t` does not satisfy the predicate `P`. */
-  final def notValid(t: T): Boolean =
+  transparent inline final def notValid(t: T): Boolean =
     validate(t).isFailed
 
   /**
@@ -42,7 +42,7 @@ trait Validate[T, P] extends Serializable {
     val self: Validate.Aux[T, P, R] = this
     new Validate[U, P] {
       override type R = self.R
-      override def validate(u: U): Res = self.validate(f(u))
+      transparent inline override def validate(u: U): Res = self.validate(f(u))
       override def showExpr(u: U): String = self.showExpr(f(u))
       override def showResult(u: U, r: Res): String = self.showResult(f(u), r)
       override def accumulateShowExpr(u: U): List[String] = self.accumulateShowExpr(f(u))
@@ -62,7 +62,7 @@ object Validate {
   def instance[T, P, R0](f: T => Result[R0], g: T => String): Aux[T, P, R0] =
     new Validate[T, P] {
       override type R = R0
-      override def validate(t: T): Res = f(t)
+      transparent inline override def validate(t: T): Res = f(t)
       override def showExpr(t: T): String = g(t)
     }
 
@@ -78,7 +78,7 @@ object Validate {
     val g = showExpr
     new Validate[T, P] {
       override type R = P
-      override def validate(t: T): Res = Result.fromBoolean(f(t), p)
+      transparent inline override def validate(t: T): Res = Result.fromBoolean(f(t), p)
       override def showExpr(t: T): String = g(t)
     }
   }
@@ -91,7 +91,7 @@ object Validate {
     new Validate[T, P] {
       override type R = P
 
-      override def validate(t: T): Res =
+      transparent inline override def validate(t: T): Res =
         try {
           pf(t)
           Passed(p)

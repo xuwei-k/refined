@@ -338,7 +338,7 @@ def moduleConfig(name: String): Project => Project =
     .settings(moduleName := s"$projectName-$name")
     .settings(commonSettings)
     .settings(
-      scalaVersion := Scala_2_13,
+      scalaVersion := Scala_3,
       crossScalaVersions := moduleCrossScalaVersionsMatrix(name, JVMPlatform)
     )
 
@@ -366,7 +366,7 @@ lazy val moduleCrossSettings = Def.settings(
 
 def moduleJvmSettings(name: String): Seq[Def.Setting[?]] =
   Def.settings(
-    scalaVersion := Scala_2_13,
+    scalaVersion := Scala_3,
     javaOptions ++= Seq("-Duser.language=en"),
     Test / fork := true,
     crossScalaVersions := moduleCrossScalaVersionsMatrix(name, JVMPlatform),
@@ -387,7 +387,7 @@ def moduleJvmSettings(name: String): Seq[Def.Setting[?]] =
 
 def moduleJsSettings(name: String): Seq[Def.Setting[?]] =
   Def.settings(
-    scalaVersion := Scala_2_13,
+    scalaVersion := Scala_3,
     crossScalaVersions := moduleCrossScalaVersionsMatrix(name, JSPlatform),
     doctestGenTests := Seq.empty,
     mimaFailOnNoPrevious := false,

@@ -14,22 +14,24 @@ trait RefinedType[FTP] extends Serializable {
 
   val refType: RefType[F]
 
-  val validate: Validate[T, P]
+  inline def validate: Validate[T, P]
 
   val alias: F[T, P] =:= FTP
 
   val dealias: FTP =:= F[T, P]
 
-  final def refine(t: T): Either[String, FTP] = {
-    val res = validate.validate(t)
+  inline final def refine(t: T): Either[String, FTP] = {
+    val v = validate
+    val res = v.validate(t)
     if (res.isPassed) Right(refType.unsafeWrap(t).asInstanceOf[FTP])
-    else Left(validate.showResult(t, res))
+    else Left(v.showResult(t, res))
   }
 
-  final def unsafeRefine(t: T): FTP = {
-    val res = validate.validate(t)
+  inline final def unsafeRefine(t: T): FTP = {
+    val v = validate
+    val res = v.validate(t)
     if (res.isPassed) refType.unsafeWrap(t).asInstanceOf[FTP]
-    else throw new IllegalArgumentException(validate.showResult(t, res))
+    else throw new IllegalArgumentException(v.showResult(t, res))
   }
 }
 

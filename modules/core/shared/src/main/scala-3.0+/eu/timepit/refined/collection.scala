@@ -91,32 +91,38 @@ object collection extends CollectionInference {
   type NonEmpty = Not[Empty]
 
   object Count {
-    implicit def countValidate[A, PA, RA, PC, RC, T](implicit
+    inline given countValidate[A, PA, RA, PC, RC, T](using
         va: Validate.Aux[A, PA, RA],
         vc: Validate.Aux[Int, PC, RC],
         ev: T => Iterable[A]
     ): Validate.Aux[T, Count[PA, PC], Count[List[va.Res], vc.Res]] =
-      new Validate[T, Count[PA, PC]] {
-        override type R = Count[List[va.Res], vc.Res]
+      new CountValidateImpl[A, PA, RA, PC, RC, T]
 
-        override def validate(t: T): Res = {
-          val ra = ev(t).toList.map(va.validate)
-          val rc = vc.validate(ra.count(_.isPassed))
-          rc.as(Count(ra, rc))
-        }
+    final class CountValidateImpl[A, PA, RA, PC, RC, T](using
+        va: Validate.Aux[A, PA, RA],
+        vc: Validate.Aux[Int, PC, RC],
+        ev: T => Iterable[A]
+    ) extends Validate[T, Count[PA, PC]] {
+      override type R = Count[List[va.Res], vc.Res]
 
-        override def showExpr(t: T): String =
-          vc.showExpr(count(t))
-
-        override def showResult(t: T, r: Res): String = {
-          val c = count(t)
-          val expr = ev(t).map(va.showExpr).mkString("count(", ", ", ")")
-          Resources.predicateTakingResultDetail(s"$expr = $c", r, vc.showResult(c, r.detail.pc))
-        }
-
-        private def count(t: T): Int =
-          ev(t).count(va.isValid)
+      transparent inline override def validate(t: T): Res = {
+        val ra = ev(t).toList.map(x => va.validate(x))
+        val rc = vc.validate(ra.count(_.isPassed))
+        rc.as(Count(ra, rc))
       }
+
+      override def showExpr(t: T): String =
+        vc.showExpr(count(t))
+
+      override def showResult(t: T, r: Res): String = {
+        val c = count(t)
+        val expr = ev(t).map(va.showExpr).mkString("count(", ", ", ")")
+        Resources.predicateTakingResultDetail(s"$expr = $c", r, vc.showResult(c, r.detail.pc))
+      }
+
+      private inline def count(t: T): Int =
+        ev(t).count(x => va.isValid(x))
+    }
   }
 
   object Empty {
@@ -131,8 +137,8 @@ object collection extends CollectionInference {
       new Validate[T[A], Forall[P]] {
         override type R = Forall[List[v.Res]]
 
-        override def validate(t: T[A]): Res = {
-          val rt = t.toList.map(v.validate)
+        transparent inline override def validate(t: T[A]): Res = {
+          val rt = t.toList.map(x => v.validate(x))
           Result.fromBoolean(rt.forall(_.isPassed), Forall(rt))
         }
 
@@ -154,8 +160,8 @@ object collection extends CollectionInference {
       new Validate[T[A], Head[P]] {
         override type R = Head[Option[v.Res]]
 
-        override def validate(t: T[A]): Res = {
-          val ra = t.headOption.map(v.validate)
+        transparent inline override def validate(t: T[A]): Res = {
+          val ra = t.headOption.map(x => v.validate(x))
           Result.fromBoolean(ra.fold(false)(_.isPassed), Head(ra))
         }
 
@@ -182,8 +188,8 @@ object collection extends CollectionInference {
       new Validate[T, Index[N, P]] {
         override type R = Index[N, Option[v.Res]]
 
-        override def validate(t: T): Res = {
-          val ra = ev(t).lift(wn.value).map(v.validate)
+        transparent inline override def validate(t: T): Res = {
+          val ra = ev(t).lift(wn.value).map(x => v.validate(x))
           Result.fromBoolean(ra.fold(false)(_.isPassed), Index(wn.value, ra))
         }
 
@@ -207,8 +213,8 @@ object collection extends CollectionInference {
       new Validate[T[A], Init[P]] {
         override type R = Init[List[v.Res]]
 
-        override def validate(t: T[A]): Res = {
-          val ra = t.toList.dropRight(1).map(v.validate)
+        transparent inline override def validate(t: T[A]): Res = {
+          val ra = t.toList.dropRight(1).map(x => v.validate(x))
           Result.fromBoolean(ra.forall(_.isPassed), Init(ra))
         }
 
@@ -230,8 +236,8 @@ object collection extends CollectionInference {
       new Validate[T[A], Last[P]] {
         override type R = Last[Option[v.Res]]
 
-        override def validate(t: T[A]): Res = {
-          val ra = t.lastOption.map(v.validate)
+        transparent inline override def validate(t: T[A]): Res = {
+          val ra = t.lastOption.map(x => v.validate(x))
           Result.fromBoolean(ra.fold(false)(_.isPassed), Last(ra))
         }
 
@@ -257,7 +263,7 @@ object collection extends CollectionInference {
       new Validate[T, Size[P]] {
         override type R = Size[v.Res]
 
-        override def validate(t: T): Res = {
+        transparent inline override def validate(t: T): Res = {
           val r = v.validate(ev(t).size)
           r.as(Size(r))
         }
@@ -280,8 +286,8 @@ object collection extends CollectionInference {
       new Validate[T[A], Tail[P]] {
         override type R = Tail[List[v.Res]]
 
-        override def validate(t: T[A]): Res = {
-          val ra = t.toList.drop(1).map(v.validate)
+        transparent inline override def validate(t: T[A]): Res = {
+          val ra = t.toList.drop(1).map(x => v.validate(x))
           Result.fromBoolean(ra.forall(_.isPassed), Tail(ra))
         }
 

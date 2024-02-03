@@ -71,7 +71,7 @@ object generic extends GenericInference {
 
 private[refined] trait GenericInference {
 
-  implicit def equalValidateInference[T, U, P](implicit
+  implicit inline def equalValidateInference[T, U, P](implicit
       v: Validate[T, P],
       wu: WitnessAs[U, T]
   ): Equal[U] ==> P =

@@ -58,7 +58,7 @@ object boolean extends BooleanInference0 {
       new Validate[T, Not[P]] {
         override type R = Not[v.Res]
 
-        override def validate(t: T): Res = {
+        transparent inline override def validate(t: T): Res = {
           val r = v.validate(t)
           Result.fromBoolean(r.isFailed, Not(r))
         }
@@ -85,7 +85,7 @@ object boolean extends BooleanInference0 {
       new Validate[T, A And B] {
         override type R = va.Res And vb.Res
 
-        override def validate(t: T): Res = {
+        transparent inline override def validate(t: T): Res = {
           val (ra, rb) = (va.validate(t), vb.validate(t))
           Result.fromBoolean(ra.isPassed && rb.isPassed, And(ra, rb))
         }
@@ -118,7 +118,7 @@ object boolean extends BooleanInference0 {
       new Validate[T, A Or B] {
         override type R = va.Res Or vb.Res
 
-        override def validate(t: T): Res = {
+        transparent inline override def validate(t: T): Res = {
           val (ra, rb) = (va.validate(t), vb.validate(t))
           Result.fromBoolean(ra.isPassed || rb.isPassed, Or(ra, rb))
         }
@@ -151,7 +151,7 @@ object boolean extends BooleanInference0 {
       new Validate[T, A Xor B] {
         override type R = va.Res Xor vb.Res
 
-        override def validate(t: T): Res = {
+        transparent inline override def validate(t: T): Res = {
           val (ra, rb) = (va.validate(t), vb.validate(t))
           Result.fromBoolean(ra.isPassed ^ rb.isPassed, Xor(ra, rb))
         }
@@ -187,7 +187,7 @@ object boolean extends BooleanInference0 {
       new Validate[T, AllOf[PH *: PT]] {
         override type R = AllOf[vh.Res *: RT]
 
-        override def validate(t: T): Res = {
+        transparent inline override def validate(t: T): Res = {
           val rh = vh.validate(t)
           val rt = vt.validate(t)
           Result.fromBoolean(rh.isPassed && rt.isPassed, AllOf(rh *: rt.detail.ps))
@@ -212,7 +212,7 @@ object boolean extends BooleanInference0 {
       new Validate[T, AnyOf[PH *: PT]] {
         override type R = AnyOf[vh.Res *: RT]
 
-        override def validate(t: T): Res = {
+        transparent inline override def validate(t: T): Res = {
           val rh = vh.validate(t)
           val rt = vt.validate(t)
           Result.fromBoolean(rh.isPassed || rt.isPassed, AnyOf(rh *: rt.detail.ps))

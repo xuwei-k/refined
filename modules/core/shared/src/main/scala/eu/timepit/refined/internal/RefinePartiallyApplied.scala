@@ -11,7 +11,7 @@ import eu.timepit.refined.api.{RefType, Validate}
  */
 final class RefinePartiallyApplied[F[_, _], P](rt: RefType[F]) {
 
-  def apply[T](t: T)(implicit v: Validate[T, P]): Either[String, F[T, P]] = {
+  inline def apply[T](t: T)(implicit v: Validate[T, P]): Either[String, F[T, P]] = {
     val res = v.validate(t)
     if (res.isPassed) Right(rt.unsafeWrap(t))
     else Left(v.showResult(t, res))
