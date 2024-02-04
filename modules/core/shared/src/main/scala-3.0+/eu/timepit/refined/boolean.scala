@@ -55,7 +55,7 @@ object boolean extends BooleanInference0 {
     implicit def notValidate[T, P, R](implicit
         v: Validate.Aux[T, P, R]
     ): Validate.Aux[T, Not[P], Not[v.Res]] =
-      new Validate[T, Not[P]] {
+      new Validate.AccumulateShowExprDefault[T, Not[P]] {
         override type R = Not[v.Res]
 
         transparent inline override def validate(t: T): Res = {
@@ -82,7 +82,7 @@ object boolean extends BooleanInference0 {
         va: Validate.Aux[T, A, RA],
         vb: Validate.Aux[T, B, RB]
     ): Validate.Aux[T, A And B, va.Res And vb.Res] =
-      new Validate[T, A And B] {
+      new Validate.AccumulateShowExprDefault[T, A And B] {
         override type R = va.Res And vb.Res
 
         transparent inline override def validate(t: T): Res = {
@@ -115,7 +115,7 @@ object boolean extends BooleanInference0 {
         va: Validate.Aux[T, A, RA],
         vb: Validate.Aux[T, B, RB]
     ): Validate.Aux[T, A Or B, va.Res Or vb.Res] =
-      new Validate[T, A Or B] {
+      new Validate.AccumulateShowExprDefault[T, A Or B] {
         override type R = va.Res Or vb.Res
 
         transparent inline override def validate(t: T): Res = {
@@ -148,7 +148,7 @@ object boolean extends BooleanInference0 {
         va: Validate.Aux[T, A, RA],
         vb: Validate.Aux[T, B, RB]
     ): Validate.Aux[T, A Xor B, va.Res Xor vb.Res] =
-      new Validate[T, A Xor B] {
+      new Validate.AccumulateShowExprDefault[T, A Xor B] {
         override type R = va.Res Xor vb.Res
 
         transparent inline override def validate(t: T): Res = {
@@ -184,7 +184,7 @@ object boolean extends BooleanInference0 {
         vh: Validate.Aux[T, PH, RH],
         vt: Validate.Aux[T, AllOf[PT], AllOf[RT]]
     ): Validate.Aux[T, AllOf[PH *: PT], AllOf[vh.Res *: RT]] =
-      new Validate[T, AllOf[PH *: PT]] {
+      new Validate.ShowResultDefault[T, AllOf[PH *: PT]] {
         override type R = AllOf[vh.Res *: RT]
 
         transparent inline override def validate(t: T): Res = {
@@ -209,7 +209,7 @@ object boolean extends BooleanInference0 {
         vh: Validate.Aux[T, PH, RH],
         vt: Validate.Aux[T, AnyOf[PT], AnyOf[RT]]
     ): Validate.Aux[T, AnyOf[PH *: PT], AnyOf[vh.Res *: RT]] =
-      new Validate[T, AnyOf[PH *: PT]] {
+      new Validate.ShowResultDefault[T, AnyOf[PH *: PT]] {
         override type R = AnyOf[vh.Res *: RT]
 
         transparent inline override def validate(t: T): Res = {

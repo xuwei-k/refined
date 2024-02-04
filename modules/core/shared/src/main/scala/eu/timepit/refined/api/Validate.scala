@@ -20,8 +20,10 @@ trait Validate[T, P] extends Serializable {
   /** Returns a string representation of this `[[Validate]]` using `t`. */
   inline def showExpr(t: T): String
 
-  inline def showResult(t: T, r: Res): String =
-    Resources.predicateResultDetailDot(r, showExpr(t))
+  inline def showResult(
+      t: T,
+      r: Res
+  ): String // = Resources.predicateResultDetailDot(r, showExpr(t))
 
   /** Checks if `t` satisfies the predicate `P`. */
   transparent inline final def isValid(t: T): Boolean =
@@ -35,8 +37,7 @@ trait Validate[T, P] extends Serializable {
    * Returns the result of `[[showExpr]]` in a `List`. Can be overridden
    * to accumulate the string representations of sub-predicates.
    */
-  inline def accumulateShowExpr(t: T): List[String] =
-    List(showExpr(t))
+  inline def accumulateShowExpr(t: T): List[String]
 
   private[refined] def contramap[U](f: U => T): Validate.Aux[U, P, R] = {
     val self: Validate.Aux[T, P, R] = this
@@ -51,6 +52,18 @@ trait Validate[T, P] extends Serializable {
 }
 
 object Validate {
+  trait ShowResultDefault[T, P] extends Validate[T, P] {
+    override inline def showResult(t: T, r: Res): String =
+      Resources.predicateResultDetailDot(r, showExpr(t))
+  }
+
+  trait AccumulateShowExprDefault[T, P] extends Validate[T, P] {
+
+    override inline def accumulateShowExpr(t: T): List[String] =
+      List(showExpr(t))
+  }
+
+  trait Default[T, P] extends AccumulateShowExprDefault[T, P] with ShowResultDefault[T, P]
 
   type Aux[T, P, R0] = Validate[T, P] { type R = R0 }
 
