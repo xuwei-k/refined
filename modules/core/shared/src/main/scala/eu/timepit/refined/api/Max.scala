@@ -48,7 +48,7 @@ trait MaxInstances extends LowPriorityMaxInstances {
   ): Max[F[T, Less[N]]] =
     Max.instance(rt.unsafeWrap(at.nextDown(rt.unwrap(lessEqualMax.max))))
 
-  implicit def andMax[F[_, _], T, L, R](implicit
+  implicit inline def andMax[F[_, _], T, L, R](implicit
       rt: RefType[F],
       ml: Max[F[T, L]],
       mr: Max[F[T, R]],
@@ -59,7 +59,7 @@ trait MaxInstances extends LowPriorityMaxInstances {
 }
 
 trait LowPriorityMaxInstances {
-  implicit def validateMax[F[_, _], T, P](implicit
+  implicit inline def validateMax[F[_, _], T, P](implicit
       rt: RefType[F],
       mt: Max[T],
       at: Adjacent[T],

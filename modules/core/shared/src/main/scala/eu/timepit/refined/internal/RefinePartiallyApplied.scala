@@ -17,6 +17,6 @@ final class RefinePartiallyApplied[F[_, _], P](rt: RefType[F]) {
     else Left(v.showResult(t, res))
   }
 
-  def unsafeFrom[T](t: T)(implicit v: Validate[T, P]): F[T, P] =
+  inline def unsafeFrom[T](t: T)(implicit v: Validate[T, P]): F[T, P] =
     apply(t).fold(err => throw new IllegalArgumentException(err), identity)
 }

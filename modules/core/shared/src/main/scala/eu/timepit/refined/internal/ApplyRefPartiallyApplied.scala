@@ -11,7 +11,7 @@ import eu.timepit.refined.api.{RefType, Validate}
  */
 final class ApplyRefPartiallyApplied[FTP] {
 
-  def apply[F[_, _], T, P](t: T)(implicit
+  inline def apply[F[_, _], T, P](t: T)(implicit
       ev: F[T, P] =:= FTP,
       rt: RefType[F],
       v: Validate[T, P]

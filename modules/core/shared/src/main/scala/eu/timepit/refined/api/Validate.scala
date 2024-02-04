@@ -44,8 +44,8 @@ trait Validate[T, P] extends Serializable {
       override type R = self.R
       transparent inline override def validate(u: U): Res = self.validate(f(u))
       inline override def showExpr(u: U): String = self.showExpr(f(u))
-      override def showResult(u: U, r: Res): String = self.showResult(f(u), r)
-      override def accumulateShowExpr(u: U): List[String] = self.accumulateShowExpr(f(u))
+      inline override def showResult(u: U, r: Res): String = self.showResult(f(u), r)
+      inline override def accumulateShowExpr(u: U): List[String] = self.accumulateShowExpr(f(u))
     }
   }
 }

@@ -48,7 +48,7 @@ trait MinInstances extends LowPriorityMinInstances {
   ): Min[F[T, Greater[N]]] =
     Min.instance(rt.unsafeWrap(at.nextUp(rt.unwrap(greaterEqualMin.min))))
 
-  implicit def andMin[F[_, _], T, L, R](implicit
+  implicit inline def andMin[F[_, _], T, L, R](implicit
       rt: RefType[F],
       ml: Min[F[T, L]],
       mr: Min[F[T, R]],
@@ -59,7 +59,7 @@ trait MinInstances extends LowPriorityMinInstances {
 }
 
 trait LowPriorityMinInstances {
-  implicit def validateMin[F[_, _], T, P](implicit
+  implicit inline def validateMin[F[_, _], T, P](implicit
       rt: RefType[F],
       mt: Min[T],
       at: Adjacent[T],
