@@ -37,6 +37,6 @@ final case class Failed[A](detail: A) extends Result[A]
 
 object Result {
 
-  def fromBoolean[A](b: Boolean, detail: A): Result[A] =
+  inline transparent def fromBoolean[A](inline b: Boolean, inline detail: A): Result[A] =
     if (b) Passed(detail) else Failed(detail)
 }

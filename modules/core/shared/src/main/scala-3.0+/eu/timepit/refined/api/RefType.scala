@@ -98,7 +98,9 @@ object RefType {
     inline def mapRefine[U](f: T => U)(implicit v: Validate[U, P]): Either[String, F[U, P]] =
       F.mapRefine(tp)(f)
 
-    inline def coflatMapRefine[U](f: F[T, P] => U)(implicit v: Validate[U, P]): Either[String, F[U, P]] =
+    inline def coflatMapRefine[U](f: F[T, P] => U)(implicit
+        v: Validate[U, P]
+    ): Either[String, F[U, P]] =
       F.coflatMapRefine(tp)(f)
   }
 

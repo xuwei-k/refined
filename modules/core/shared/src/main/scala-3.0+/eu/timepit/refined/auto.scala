@@ -33,9 +33,8 @@ object auto {
   implicit def autoUnwrap[F[_, _], T, P](tp: F[T, P])(implicit rt: RefType[F]): T =
     rt.unwrap(tp)
 
-  implicit inline transparent def autoRefineV[T, P](inline t: T)(
-    using inline rt: RefType[Refined])(
-    using inline v: Validate[T, P]
+  implicit inline transparent def autoRefineV[T, P](inline t: T)(using inline rt: RefType[Refined])(
+      using inline v: Validate[T, P]
   ): Refined[T, P] = {
     val res = v.validate(t)
     if (res.isFailed) {

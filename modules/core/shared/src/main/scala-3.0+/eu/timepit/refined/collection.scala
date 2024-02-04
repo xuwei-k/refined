@@ -169,7 +169,12 @@ object collection extends CollectionInference {
           optElemShowExpr(t.headOption, x => v.showExpr(x))
 
         override inline def showResult(t: T[A], r: Res): String =
-          optElemShowResult(t.headOption, r.detail.p, (a: A) => s"head($t) = $a", (x1, x2) => v.showResult(x1, x2))
+          optElemShowResult(
+            t.headOption,
+            r.detail.p,
+            (a: A) => s"head($t) = $a",
+            (x1, x2) => v.showResult(x1, x2)
+          )
       }
 
     implicit def headValidateView[A, P, R, T](implicit
@@ -245,7 +250,12 @@ object collection extends CollectionInference {
           optElemShowExpr(t.lastOption, x => v.showExpr(x))
 
         override inline def showResult(t: T[A], r: Res): String =
-          optElemShowResult(t.lastOption, r.detail.p, (a: A) => s"last($t) = $a", (x1, x2) => v.showResult(x1, x2))
+          optElemShowResult(
+            t.lastOption,
+            r.detail.p,
+            (a: A) => s"last($t) = $a",
+            (x1, x2) => v.showResult(x1, x2)
+          )
       }
 
     implicit def lastValidateView[A, P, R, T](implicit
