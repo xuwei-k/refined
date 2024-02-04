@@ -3,6 +3,8 @@ package eu.timepit.refined
 import eu.timepit.refined.api.RefType
 import eu.timepit.refined.api.Refined
 import eu.timepit.refined.api.Validate
+import eu.timepit.refined.api.Passed
+import eu.timepit.refined.api.Failed
 
 /**
  * Module that provides automatic refinements and automatic conversions
@@ -33,14 +35,16 @@ object auto {
   implicit def autoUnwrap[F[_, _], T, P](tp: F[T, P])(implicit rt: RefType[F]): T =
     rt.unwrap(tp)
 
-  implicit inline transparent def autoRefineV[T, P](inline t: T)(using inline rt: RefType[Refined])(
+  inline transparent def autoRefineV[T, P](inline t: T)(using inline rt: RefType[Refined])(
       using inline v: Validate[T, P]
   ): Refined[T, P] = {
-    val res = v.validate(t)
-    if (res.isFailed) {
-      scala.compiletime.error(v.showResult(t, res.asInstanceOf[Nothing]))
+    v.validate(t) match {
+      case Passed(x) =>
+        rt.unsafeWrap[T, P](t)
+      case Failed(x) =>
+        //scala.compiletime.error(v.showResult(t, res.asInstanceOf[Nothing]))
+        scala.compiletime.error("can't compile")
     }
-    rt.unsafeWrap[T, P](t)
   }
 
 }

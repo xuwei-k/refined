@@ -90,7 +90,7 @@ object numeric extends NumericInference {
     implicit inline transparent def lessValidate[T, N](implicit
         inline wn: WitnessAs[N, T],
         inline nt: Numeric[T]
-    ): Validate.Plain[T, Less[N]] =
+    ): Validate.FromPredicate[T, Less[N]] =
       Validate.fromPredicate(t => nt.lt(t, wn.snd), t => s"($t < ${wn.snd})", Less(wn.fst))
   }
 
@@ -98,7 +98,7 @@ object numeric extends NumericInference {
     implicit inline transparent def greaterValidate[T, N](implicit
         inline wn: WitnessAs[N, T],
         inline nt: Numeric[T]
-    ): Validate.Plain[T, Greater[N]] =
+    ): Validate.FromPredicate[T, Greater[N]] =
       Validate.fromPredicate(t => nt.gt(t, wn.snd), t => s"($t > ${wn.snd})", Greater(wn.fst))
   }
 

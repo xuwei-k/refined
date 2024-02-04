@@ -17,7 +17,7 @@ trait Validate[T, P] extends Serializable {
 
   final type Res = Result[R]
 
-  transparent inline def validate(t: T): Res
+  transparent inline def validate(inline t: T): Res
 
   /** Returns a string representation of this `[[Validate]]` using `t`. */
   inline def showExpr(t: T): String
@@ -45,7 +45,7 @@ trait Validate[T, P] extends Serializable {
     val self: Validate.Aux[T, P, R] = this
     new Validate[U, P] {
       override type R = self.R
-      transparent inline override def validate(u: U): Res = self.validate(f(u))
+      transparent inline override def validate(inline u: U): Res = self.validate(f(u))
       inline override def showExpr(u: U): String = self.showExpr(f(u))
       inline override def showResult(u: U, r: Res): String = self.showResult(f(u), r)
       inline override def accumulateShowExpr(u: U): List[String] = self.accumulateShowExpr(f(u))
@@ -71,13 +71,13 @@ object Validate {
 
   type Plain[T, P] = Aux[T, P, P]
 
-  def apply[T, P](implicit v: Validate[T, P]): Aux[T, P, v.R] = v
+  inline transparent def apply[T, P](using v: Validate[T, P]): v.type = v
 
   /** Constructs a `[[Validate]]` from its parameters. */
   def instance[T, P, R0](f: T => Result[R0], g: T => String): Aux[T, P, R0] =
     new Validate.Default[T, P] {
       override type R = R0
-      transparent inline override def validate(t: T): Res = f(t)
+      transparent inline override def validate(inline t: T): Res = f(t)
       override inline def showExpr(t: T): String = g(t)
     }
 
@@ -93,13 +93,13 @@ object Validate {
       inline f: T => Boolean,
       inline g: T => String,
       inline p: P
-  ): Plain[T, P] =
+  ): FromPredicate[T, P] =
     new FromPredicate[T, P](f, g, p)
 
   final class FromPredicate[T, P](f: T => Boolean, g: T => String, p: P)
       extends Validate.Default[T, P] {
     override type R = P
-    transparent inline override def validate(t: T): Res = Result.fromBoolean(f(t), p)
+    transparent inline override def validate(inline t: T): Res = Result.fromBoolean(f(t), p)
     override inline def showExpr(t: T): String = g(t)
   }
 
@@ -111,7 +111,7 @@ object Validate {
     new Validate.AccumulateShowExprDefault[T, P] {
       override type R = P
 
-      transparent inline override def validate(t: T): Res =
+      transparent inline override def validate(inline t: T): Res =
         try {
           pf(t)
           Passed(p)
