@@ -20,7 +20,7 @@ trait Validate[T, P] extends Serializable {
   /** Returns a string representation of this `[[Validate]]` using `t`. */
   inline def showExpr(t: T): String
 
-  def showResult(t: T, r: Res): String =
+  inline def showResult(t: T, r: Res): String =
     Resources.predicateResultDetailDot(r, showExpr(t))
 
   /** Checks if `t` satisfies the predicate `P`. */
@@ -35,7 +35,7 @@ trait Validate[T, P] extends Serializable {
    * Returns the result of `[[showExpr]]` in a `List`. Can be overridden
    * to accumulate the string representations of sub-predicates.
    */
-  def accumulateShowExpr(t: T): List[String] =
+  inline def accumulateShowExpr(t: T): List[String] =
     List(showExpr(t))
 
   private[refined] def contramap[U](f: U => T): Validate.Aux[U, P, R] = {
@@ -43,7 +43,7 @@ trait Validate[T, P] extends Serializable {
     new Validate[U, P] {
       override type R = self.R
       transparent inline override def validate(u: U): Res = self.validate(f(u))
-      override def showExpr(u: U): String = self.showExpr(f(u))
+      inline override def showExpr(u: U): String = self.showExpr(f(u))
       override def showResult(u: U, r: Res): String = self.showResult(f(u), r)
       override def accumulateShowExpr(u: U): List[String] = self.accumulateShowExpr(f(u))
     }

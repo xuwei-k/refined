@@ -66,7 +66,7 @@ object boolean extends BooleanInference0 {
         inline override def showExpr(t: T): String =
           s"!${v.showExpr(t)}"
 
-        override def showResult(t: T, r: Res): String = {
+        override inline def showResult(t: T, r: Res): String = {
           val expr = v.showExpr(t)
           val rp = r.detail.p
           rp match {
@@ -93,7 +93,7 @@ object boolean extends BooleanInference0 {
         inline override def showExpr(t: T): String =
           s"(${va.showExpr(t)} && ${vb.showExpr(t)})"
 
-        override def showResult(t: T, r: Res): String = {
+        override inline def showResult(t: T, r: Res): String = {
           val expr = showExpr(t)
           val (ra, rb) = (r.detail.a, r.detail.b)
           (ra, rb) match {
@@ -126,7 +126,7 @@ object boolean extends BooleanInference0 {
         inline override def showExpr(t: T): String =
           s"(${va.showExpr(t)} || ${vb.showExpr(t)})"
 
-        override def showResult(t: T, r: Res): String = {
+        override inline def showResult(t: T, r: Res): String = {
           val expr = showExpr(t)
           val (ra, rb) = (r.detail.a, r.detail.b)
           (ra, rb) match {
@@ -159,7 +159,7 @@ object boolean extends BooleanInference0 {
         inline override def showExpr(t: T): String =
           s"(${va.showExpr(t)} ^ ${vb.showExpr(t)})"
 
-        override def showResult(t: T, r: Res): String = {
+        override inline def showResult(t: T, r: Res): String = {
           val expr = showExpr(t)
           val (ra, rb) = (r.detail.a, r.detail.b)
           (ra, rb) match {
@@ -196,7 +196,7 @@ object boolean extends BooleanInference0 {
         inline override def showExpr(t: T): String =
           accumulateShowExpr(t).mkString("(", " && ", ")")
 
-        override def accumulateShowExpr(t: T): List[String] =
+        override inline def accumulateShowExpr(t: T): List[String] =
           vh.showExpr(t) :: vt.accumulateShowExpr(t)
       }
   }
@@ -221,7 +221,7 @@ object boolean extends BooleanInference0 {
         inline override def showExpr(t: T): String =
           accumulateShowExpr(t).mkString("(", " || ", ")")
 
-        override def accumulateShowExpr(t: T): List[String] =
+        override inline def accumulateShowExpr(t: T): List[String] =
           vh.showExpr(t) :: vt.accumulateShowExpr(t)
       }
   }

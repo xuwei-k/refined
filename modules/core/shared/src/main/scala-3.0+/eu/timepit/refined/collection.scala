@@ -114,9 +114,9 @@ object collection extends CollectionInference {
       inline override def showExpr(t: T): String =
         vc.showExpr(count(t))
 
-      override def showResult(t: T, r: Res): String = {
+      override inline def showResult(t: T, r: Res): String = {
         val c = count(t)
-        val expr = ev(t).map(va.showExpr).mkString("count(", ", ", ")")
+        val expr = ev(t).map(x => va.showExpr(x)).mkString("count(", ", ", ")")
         Resources.predicateTakingResultDetail(s"$expr = $c", r, vc.showResult(c, r.detail.pc))
       }
 
@@ -143,7 +143,7 @@ object collection extends CollectionInference {
         }
 
         inline override def showExpr(t: T[A]): String =
-          t.map(v.showExpr).mkString("(", " && ", ")")
+          t.map(x => v.showExpr(x)).mkString("(", " && ", ")")
       }
 
     implicit def forallValidateView[A, P, R, T](implicit
@@ -166,10 +166,10 @@ object collection extends CollectionInference {
         }
 
         inline override def showExpr(t: T[A]): String =
-          optElemShowExpr(t.headOption, v.showExpr)
+          optElemShowExpr(t.headOption, x => v.showExpr(x))
 
-        override def showResult(t: T[A], r: Res): String =
-          optElemShowResult(t.headOption, r.detail.p, (a: A) => s"head($t) = $a", v.showResult)
+        override inline def showResult(t: T[A], r: Res): String =
+          optElemShowResult(t.headOption, r.detail.p, (a: A) => s"head($t) = $a", (x1, x2) => v.showResult(x1, x2))
       }
 
     implicit def headValidateView[A, P, R, T](implicit
@@ -194,14 +194,14 @@ object collection extends CollectionInference {
         }
 
         inline override def showExpr(t: T): String =
-          optElemShowExpr(ev(t).lift(wn.value), v.showExpr)
+          optElemShowExpr(ev(t).lift(wn.value), x => v.showExpr(x))
 
-        override def showResult(t: T, r: Res): String =
+        override inline def showResult(t: T, r: Res): String =
           optElemShowResult(
             ev(t).lift(wn.value),
             r.detail.p,
             (a: A) => s"index($t, ${wn.value}) = $a",
-            v.showResult
+            (x1, x2) => v.showResult(x1, x2)
           )
       }
   }
@@ -219,7 +219,7 @@ object collection extends CollectionInference {
         }
 
         inline override def showExpr(t: T[A]): String =
-          t.toList.dropRight(1).map(v.showExpr).mkString("(", " && ", ")")
+          t.toList.dropRight(1).map(x => v.showExpr(x)).mkString("(", " && ", ")")
       }
 
     implicit def initValidateView[A, P, R, T](implicit
@@ -242,10 +242,10 @@ object collection extends CollectionInference {
         }
 
         inline override def showExpr(t: T[A]): String =
-          optElemShowExpr(t.lastOption, v.showExpr)
+          optElemShowExpr(t.lastOption, x => v.showExpr(x))
 
-        override def showResult(t: T[A], r: Res): String =
-          optElemShowResult(t.lastOption, r.detail.p, (a: A) => s"last($t) = $a", v.showResult)
+        override inline def showResult(t: T[A], r: Res): String =
+          optElemShowResult(t.lastOption, r.detail.p, (a: A) => s"last($t) = $a", (x1, x2) => v.showResult(x1, x2))
       }
 
     implicit def lastValidateView[A, P, R, T](implicit
@@ -271,7 +271,7 @@ object collection extends CollectionInference {
         inline override def showExpr(t: T): String =
           v.showExpr(ev(t).size)
 
-        override def showResult(t: T, r: Res): String = {
+        override inline def showResult(t: T, r: Res): String = {
           val size = ev(t).size
           val nested = v.showResult(size, r.detail.p)
           Resources.predicateTakingResultDetail(s"size($t) = $size", r, nested)
@@ -292,7 +292,7 @@ object collection extends CollectionInference {
         }
 
         inline override def showExpr(t: T[A]): String =
-          t.toList.drop(1).map(v.showExpr).mkString("(", " && ", ")")
+          t.toList.drop(1).map(x => v.showExpr(x)).mkString("(", " && ", ")")
       }
 
     implicit def tailValidateView[A, P, R, T](implicit
