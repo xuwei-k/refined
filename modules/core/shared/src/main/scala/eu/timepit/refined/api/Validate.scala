@@ -18,7 +18,7 @@ trait Validate[T, P] extends Serializable {
   transparent inline def validate(t: T): Res
 
   /** Returns a string representation of this `[[Validate]]` using `t`. */
-  def showExpr(t: T): String
+  inline def showExpr(t: T): String
 
   def showResult(t: T, r: Res): String =
     Resources.predicateResultDetailDot(r, showExpr(t))

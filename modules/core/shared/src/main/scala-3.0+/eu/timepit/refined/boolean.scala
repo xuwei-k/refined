@@ -63,7 +63,7 @@ object boolean extends BooleanInference0 {
           Result.fromBoolean(r.isFailed, Not(r))
         }
 
-        override def showExpr(t: T): String =
+        inline override def showExpr(t: T): String =
           s"!${v.showExpr(t)}"
 
         override def showResult(t: T, r: Res): String = {
@@ -90,7 +90,7 @@ object boolean extends BooleanInference0 {
           Result.fromBoolean(ra.isPassed && rb.isPassed, And(ra, rb))
         }
 
-        override def showExpr(t: T): String =
+        inline override def showExpr(t: T): String =
           s"(${va.showExpr(t)} && ${vb.showExpr(t)})"
 
         override def showResult(t: T, r: Res): String = {
@@ -123,7 +123,7 @@ object boolean extends BooleanInference0 {
           Result.fromBoolean(ra.isPassed || rb.isPassed, Or(ra, rb))
         }
 
-        override def showExpr(t: T): String =
+        inline override def showExpr(t: T): String =
           s"(${va.showExpr(t)} || ${vb.showExpr(t)})"
 
         override def showResult(t: T, r: Res): String = {
@@ -156,7 +156,7 @@ object boolean extends BooleanInference0 {
           Result.fromBoolean(ra.isPassed ^ rb.isPassed, Xor(ra, rb))
         }
 
-        override def showExpr(t: T): String =
+        inline override def showExpr(t: T): String =
           s"(${va.showExpr(t)} ^ ${vb.showExpr(t)})"
 
         override def showResult(t: T, r: Res): String = {
@@ -193,7 +193,7 @@ object boolean extends BooleanInference0 {
           Result.fromBoolean(rh.isPassed && rt.isPassed, AllOf(rh *: rt.detail.ps))
         }
 
-        override def showExpr(t: T): String =
+        inline override def showExpr(t: T): String =
           accumulateShowExpr(t).mkString("(", " && ", ")")
 
         override def accumulateShowExpr(t: T): List[String] =
@@ -218,7 +218,7 @@ object boolean extends BooleanInference0 {
           Result.fromBoolean(rh.isPassed || rt.isPassed, AnyOf(rh *: rt.detail.ps))
         }
 
-        override def showExpr(t: T): String =
+        inline override def showExpr(t: T): String =
           accumulateShowExpr(t).mkString("(", " || ", ")")
 
         override def accumulateShowExpr(t: T): List[String] =

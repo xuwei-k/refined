@@ -111,7 +111,7 @@ object collection extends CollectionInference {
         rc.as(Count(ra, rc))
       }
 
-      override def showExpr(t: T): String =
+      inline override def showExpr(t: T): String =
         vc.showExpr(count(t))
 
       override def showResult(t: T, r: Res): String = {
@@ -142,7 +142,7 @@ object collection extends CollectionInference {
           Result.fromBoolean(rt.forall(_.isPassed), Forall(rt))
         }
 
-        override def showExpr(t: T[A]): String =
+        inline override def showExpr(t: T[A]): String =
           t.map(v.showExpr).mkString("(", " && ", ")")
       }
 
@@ -165,7 +165,7 @@ object collection extends CollectionInference {
           Result.fromBoolean(ra.fold(false)(_.isPassed), Head(ra))
         }
 
-        override def showExpr(t: T[A]): String =
+        inline override def showExpr(t: T[A]): String =
           optElemShowExpr(t.headOption, v.showExpr)
 
         override def showResult(t: T[A], r: Res): String =
@@ -193,7 +193,7 @@ object collection extends CollectionInference {
           Result.fromBoolean(ra.fold(false)(_.isPassed), Index(wn.value, ra))
         }
 
-        override def showExpr(t: T): String =
+        inline override def showExpr(t: T): String =
           optElemShowExpr(ev(t).lift(wn.value), v.showExpr)
 
         override def showResult(t: T, r: Res): String =
@@ -218,7 +218,7 @@ object collection extends CollectionInference {
           Result.fromBoolean(ra.forall(_.isPassed), Init(ra))
         }
 
-        override def showExpr(t: T[A]): String =
+        inline override def showExpr(t: T[A]): String =
           t.toList.dropRight(1).map(v.showExpr).mkString("(", " && ", ")")
       }
 
@@ -241,7 +241,7 @@ object collection extends CollectionInference {
           Result.fromBoolean(ra.fold(false)(_.isPassed), Last(ra))
         }
 
-        override def showExpr(t: T[A]): String =
+        inline override def showExpr(t: T[A]): String =
           optElemShowExpr(t.lastOption, v.showExpr)
 
         override def showResult(t: T[A], r: Res): String =
@@ -268,7 +268,7 @@ object collection extends CollectionInference {
           r.as(Size(r))
         }
 
-        override def showExpr(t: T): String =
+        inline override def showExpr(t: T): String =
           v.showExpr(ev(t).size)
 
         override def showResult(t: T, r: Res): String = {
@@ -291,7 +291,7 @@ object collection extends CollectionInference {
           Result.fromBoolean(ra.forall(_.isPassed), Tail(ra))
         }
 
-        override def showExpr(t: T[A]): String =
+        inline override def showExpr(t: T[A]): String =
           t.toList.drop(1).map(v.showExpr).mkString("(", " && ", ")")
       }
 

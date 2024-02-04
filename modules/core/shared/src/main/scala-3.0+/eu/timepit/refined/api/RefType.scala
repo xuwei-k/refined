@@ -42,12 +42,12 @@ trait RefType[F[_, _]] extends Serializable {
   def refine[P]: RefinePartiallyApplied[F, P] =
     new RefinePartiallyApplied(this)
 
-  def mapRefine[T, P, U](
+  inline def mapRefine[T, P, U](
       tp: F[T, P]
   )(f: T => U)(implicit v: Validate[U, P]): Either[String, F[U, P]] =
     refine(f(unwrap(tp)))
 
-  def coflatMapRefine[T, P, U](
+  inline def coflatMapRefine[T, P, U](
       tp: F[T, P]
   )(f: F[T, P] => U)(implicit v: Validate[U, P]): Either[String, F[U, P]] =
     refine(f(tp))
@@ -95,10 +95,10 @@ object RefType {
     def unwrap: T =
       F.unwrap(tp)
 
-    def mapRefine[U](f: T => U)(implicit v: Validate[U, P]): Either[String, F[U, P]] =
+    inline def mapRefine[U](f: T => U)(implicit v: Validate[U, P]): Either[String, F[U, P]] =
       F.mapRefine(tp)(f)
 
-    def coflatMapRefine[U](f: F[T, P] => U)(implicit v: Validate[U, P]): Either[String, F[U, P]] =
+    inline def coflatMapRefine[U](f: F[T, P] => U)(implicit v: Validate[U, P]): Either[String, F[U, P]] =
       F.coflatMapRefine(tp)(f)
   }
 

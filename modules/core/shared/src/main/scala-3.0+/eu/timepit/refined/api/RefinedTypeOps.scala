@@ -22,13 +22,13 @@ package eu.timepit.refined.api
  */
 class RefinedTypeOps[FTP, T](implicit rt: RefinedType.AuxT[FTP, T]) extends Serializable {
 
-  def from(t: T): Either[String, FTP] =
+  inline def from(t: T): Either[String, FTP] =
     rt.refine(t)
 
-  def unapply(t: T): Option[FTP] =
+  inline def unapply(t: T): Option[FTP] =
     from(t).toOption
 
-  def unsafeFrom(t: T): FTP =
+  inline def unsafeFrom(t: T): FTP =
     rt.unsafeRefine(t)
 }
 
