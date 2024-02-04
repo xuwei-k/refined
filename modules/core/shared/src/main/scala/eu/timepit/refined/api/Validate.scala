@@ -1,6 +1,8 @@
 package eu.timepit.refined.api
 
+import eu.timepit.refined.api.Validate.Plain
 import eu.timepit.refined.internal.Resources
+
 import scala.util.Try
 import scala.util.control.NonFatal
 
@@ -87,13 +89,18 @@ object Validate {
    * Constructs a `[[Validate]]` from the predicate `f`. All values of type
    * `T` for which `f` returns `true` are considered valid according to `P`.
    */
-  def fromPredicate[T, P](f: T => Boolean, showExpr: T => String, p: P): Plain[T, P] = {
-    val g = showExpr
-    new Validate.Default[T, P] {
-      override type R = P
-      transparent inline override def validate(t: T): Res = Result.fromBoolean(f(t), p)
-      override inline def showExpr(t: T): String = g(t)
-    }
+  inline def fromPredicate[T, P](
+      inline f: T => Boolean,
+      inline g: T => String,
+      inline p: P
+  ): Plain[T, P] =
+    new FromPredicate[T, P](f, g, p)
+
+  final class FromPredicate[T, P](f: T => Boolean, g: T => String, p: P)
+      extends Validate.Default[T, P] {
+    override type R = P
+    transparent inline override def validate(t: T): Res = Result.fromBoolean(f(t), p)
+    override inline def showExpr(t: T): String = g(t)
   }
 
   /**

@@ -33,13 +33,13 @@ object auto {
   implicit def autoUnwrap[F[_, _], T, P](tp: F[T, P])(implicit rt: RefType[F]): T =
     rt.unwrap(tp)
 
-  implicit inline def autoRefineV[T, P](t: T)(implicit
-                                       rt: RefType[Refined],
-                                       v: Validate[T, P]
+  implicit inline transparent def autoRefineV[T, P](inline t: T)(
+    using inline rt: RefType[Refined])(
+    using inline v: Validate[T, P]
   ): Refined[T, P] = {
     val res = v.validate(t)
     if (res.isFailed) {
-      scala.compiletime.error(v.showResult(t, res))
+      scala.compiletime.error(v.showResult(t, res.asInstanceOf[Nothing]))
     }
     rt.unsafeWrap[T, P](t)
   }

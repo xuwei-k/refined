@@ -87,7 +87,7 @@ object numeric extends NumericInference {
   }
 
   object Less {
-    implicit def lessValidate[T, N](implicit
+    implicit inline def lessValidate[T, N](implicit
         wn: WitnessAs[N, T],
         nt: Numeric[T]
     ): Validate.Plain[T, Less[N]] =
@@ -95,7 +95,7 @@ object numeric extends NumericInference {
   }
 
   object Greater {
-    implicit def greaterValidate[T, N](implicit
+    implicit inline def greaterValidate[T, N](implicit
         wn: WitnessAs[N, T],
         nt: Numeric[T]
     ): Validate.Plain[T, Greater[N]] =
