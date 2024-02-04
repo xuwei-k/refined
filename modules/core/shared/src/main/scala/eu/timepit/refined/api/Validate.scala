@@ -73,10 +73,10 @@ object Validate {
 
   /** Constructs a `[[Validate]]` from its parameters. */
   def instance[T, P, R0](f: T => Result[R0], g: T => String): Aux[T, P, R0] =
-    new Validate[T, P] {
+    new Validate.Default[T, P] {
       override type R = R0
       transparent inline override def validate(t: T): Res = f(t)
-      override def showExpr(t: T): String = g(t)
+      override inline def showExpr(t: T): String = g(t)
     }
 
   /** Constructs a constant `[[Validate]]` from its parameters. */
@@ -89,10 +89,10 @@ object Validate {
    */
   def fromPredicate[T, P](f: T => Boolean, showExpr: T => String, p: P): Plain[T, P] = {
     val g = showExpr
-    new Validate[T, P] {
+    new Validate.Default[T, P] {
       override type R = P
       transparent inline override def validate(t: T): Res = Result.fromBoolean(f(t), p)
-      override def showExpr(t: T): String = g(t)
+      override inline def showExpr(t: T): String = g(t)
     }
   }
 
@@ -101,7 +101,7 @@ object Validate {
    * which `pf` throws an exception are considered invalid according to `P`.
    */
   def fromPartial[T, U, P](pf: T => U, name: String, p: P): Plain[T, P] =
-    new Validate[T, P] {
+    new Validate.AccumulateShowExprDefault[T, P] {
       override type R = P
 
       transparent inline override def validate(t: T): Res =
@@ -112,10 +112,10 @@ object Validate {
           case NonFatal(_) => Failed(p)
         }
 
-      override def showExpr(t: T): String =
+      override inline def showExpr(t: T): String =
         Resources.isValidName(name, t)
 
-      override def showResult(t: T, res: Res): String =
+      override inline def showResult(t: T, res: Res): String =
         Resources.namePredicateResultMessage(name, res, Try(pf(t)))
     }
 

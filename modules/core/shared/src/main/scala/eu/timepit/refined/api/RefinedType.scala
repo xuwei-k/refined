@@ -59,7 +59,7 @@ object RefinedType {
       override type P = P0
 
       override val refType: RefType[F] = rt
-      override val validate: Validate[T, P] = v
+      override inline def validate: Validate[T, P] = v
       override val alias: F[T, P] =:= F0[T0, P0] = implicitly
       override val dealias: F0[T0, P0] =:= F[T, P] = implicitly
     }

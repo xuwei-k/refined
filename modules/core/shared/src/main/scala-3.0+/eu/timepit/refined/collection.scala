@@ -102,7 +102,7 @@ object collection extends CollectionInference {
         va: Validate.Aux[A, PA, RA],
         vc: Validate.Aux[Int, PC, RC],
         ev: T => Iterable[A]
-    ) extends Validate[T, Count[PA, PC]] {
+    ) extends Validate.AccumulateShowExprDefault[T, Count[PA, PC]] {
       override type R = Count[List[va.Res], vc.Res]
 
       transparent inline override def validate(t: T): Res = {
@@ -134,7 +134,7 @@ object collection extends CollectionInference {
     implicit def forallValidate[A, P, R, T[a] <: Iterable[a]](implicit
         v: Validate.Aux[A, P, R]
     ): Validate.Aux[T[A], Forall[P], Forall[List[v.Res]]] =
-      new Validate[T[A], Forall[P]] {
+      new Validate.Default[T[A], Forall[P]] {
         override type R = Forall[List[v.Res]]
 
         transparent inline override def validate(t: T[A]): Res = {
@@ -157,7 +157,7 @@ object collection extends CollectionInference {
     implicit def headValidate[A, P, R, T[a] <: Iterable[a]](implicit
         v: Validate.Aux[A, P, R]
     ): Validate.Aux[T[A], Head[P], Head[Option[v.Res]]] =
-      new Validate[T[A], Head[P]] {
+      new Validate.AccumulateShowExprDefault[T[A], Head[P]] {
         override type R = Head[Option[v.Res]]
 
         transparent inline override def validate(t: T[A]): Res = {
@@ -185,7 +185,7 @@ object collection extends CollectionInference {
         ev: T => PartialFunction[Int, A],
         wn: ValueOf[N]
     ): Validate.Aux[T, Index[N, P], Index[N, Option[v.Res]]] =
-      new Validate[T, Index[N, P]] {
+      new Validate.AccumulateShowExprDefault[T, Index[N, P]] {
         override type R = Index[N, Option[v.Res]]
 
         transparent inline override def validate(t: T): Res = {
@@ -210,7 +210,7 @@ object collection extends CollectionInference {
     implicit def initValidate[A, P, R, T[a] <: Iterable[a]](implicit
         v: Validate.Aux[A, P, R]
     ): Validate.Aux[T[A], Init[P], Init[List[v.Res]]] =
-      new Validate[T[A], Init[P]] {
+      new Validate.Default[T[A], Init[P]] {
         override type R = Init[List[v.Res]]
 
         transparent inline override def validate(t: T[A]): Res = {
@@ -233,7 +233,7 @@ object collection extends CollectionInference {
     implicit def lastValidate[A, P, R, T[a] <: Iterable[a]](implicit
         v: Validate.Aux[A, P, R]
     ): Validate.Aux[T[A], Last[P], Last[Option[v.Res]]] =
-      new Validate[T[A], Last[P]] {
+      new Validate.AccumulateShowExprDefault[T[A], Last[P]] {
         override type R = Last[Option[v.Res]]
 
         transparent inline override def validate(t: T[A]): Res = {
@@ -260,7 +260,7 @@ object collection extends CollectionInference {
         v: Validate.Aux[Int, P, RP],
         ev: T => Iterable[_]
     ): Validate.Aux[T, Size[P], Size[v.Res]] =
-      new Validate[T, Size[P]] {
+      new Validate.AccumulateShowExprDefault[T, Size[P]] {
         override type R = Size[v.Res]
 
         transparent inline override def validate(t: T): Res = {
@@ -283,7 +283,7 @@ object collection extends CollectionInference {
     implicit def tailValidate[A, P, R, T[a] <: Iterable[a]](implicit
         v: Validate.Aux[A, P, R]
     ): Validate.Aux[T[A], Tail[P], Tail[List[v.Res]]] =
-      new Validate[T[A], Tail[P]] {
+      new Validate.Default[T[A], Tail[P]] {
         override type R = Tail[List[v.Res]]
 
         transparent inline override def validate(t: T[A]): Res = {
