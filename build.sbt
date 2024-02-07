@@ -15,6 +15,8 @@ val Scala_2_12 = "2.12.18"
 val Scala_2_13 = "2.13.12"
 val Scala_3 = "3.3.1"
 
+scalaVersion := Scala_3
+
 val catsVersion = "2.10.0"
 val jsonpathVersion = "2.9.0"
 val macroParadiseVersion = "2.1.1"
@@ -338,7 +340,7 @@ def moduleConfig(name: String): Project => Project =
     .settings(moduleName := s"$projectName-$name")
     .settings(commonSettings)
     .settings(
-      scalaVersion := Scala_2_13,
+      scalaVersion := Scala_3,
       crossScalaVersions := moduleCrossScalaVersionsMatrix(name, JVMPlatform)
     )
 
@@ -366,7 +368,7 @@ lazy val moduleCrossSettings = Def.settings(
 
 def moduleJvmSettings(name: String): Seq[Def.Setting[?]] =
   Def.settings(
-    scalaVersion := Scala_2_13,
+    scalaVersion := Scala_3,
     javaOptions ++= Seq("-Duser.language=en"),
     Test / fork := true,
     crossScalaVersions := moduleCrossScalaVersionsMatrix(name, JVMPlatform),
@@ -387,7 +389,7 @@ def moduleJvmSettings(name: String): Seq[Def.Setting[?]] =
 
 def moduleJsSettings(name: String): Seq[Def.Setting[?]] =
   Def.settings(
-    scalaVersion := Scala_2_13,
+    scalaVersion := Scala_3,
     crossScalaVersions := moduleCrossScalaVersionsMatrix(name, JSPlatform),
     doctestGenTests := Seq.empty,
     mimaFailOnNoPrevious := false,
@@ -405,6 +407,7 @@ def moduleJsSettings(name: String): Seq[Def.Setting[?]] =
 
 def moduleNativeSettings(name: String): Seq[Def.Setting[?]] =
   Def.settings(
+    scalaVersion := Scala_3,
     crossScalaVersions := moduleCrossScalaVersionsMatrix(name, NativePlatform),
     doctestGenTests := Seq.empty,
     mimaFailOnNoPrevious := false,
