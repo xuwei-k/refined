@@ -7,6 +7,14 @@ import eu.timepit.refined.internal.Resources
 import eu.timepit.refined.numeric.{Negative, NonNegative, NonPositive, Positive}
 import scala.reflect.macros.blackbox
 
+object RefineMacro {
+
+  private val lock = new Object
+
+  private val validateCacheInstances: scala.collection.mutable.Buffer[(Any, Any, Validate[?, ?])] =
+    scala.collection.mutable.Buffer.empty
+}
+
 class RefineMacro(val c: blackbox.Context) extends MacroUtils with LiteralMatchers {
 
   import c.universe._
@@ -41,16 +49,36 @@ class RefineMacro(val c: blackbox.Context) extends MacroUtils with LiteralMatche
       T: c.WeakTypeTag[T],
       P: c.WeakTypeTag[P]
   ): Validate[T, P] =
-    validateInstances
-      .collectFirst {
-        case (tpeT, instancesForT) if tpeT =:= T.tpe =>
-          instancesForT.collectFirst {
-            case (tpeP, validate) if tpeP =:= P.tpe =>
-              validate.asInstanceOf[Validate[T, P]]
+    validateInstances.collectFirst {
+      case (tpeT, instancesForT) if tpeT =:= T.tpe =>
+        instancesForT.collectFirst {
+          case (tpeP, validate) if tpeP =:= P.tpe =>
+            validate.asInstanceOf[Validate[T, P]]
+        }
+    }.flatten match {
+      case Some(x) =>
+        x
+      case None =>
+        RefineMacro.lock.synchronized {
+          val str = s"`Validate[${show(T.tpe)}, ${show(P.tpe)}]`"
+          RefineMacro.validateCacheInstances.find(x =>
+            T.tpe =:= x._1.asInstanceOf[Type] && P.tpe =:= x._2.asInstanceOf[Type]
+          ) match {
+            case None =>
+              c.info(c.enclosingPosition, s"not found cache. eval $str", true)
+              val result = eval(v)
+              RefineMacro.validateCacheInstances += ((T.tpe, P.tpe, result))
+              result
+            case Some(x) =>
+              c.info(
+                c.enclosingPosition,
+                s"cache hit $str",
+                true
+              )
+              x._3.asInstanceOf[Validate[T, P]]
           }
-      }
-      .flatten
-      .getOrElse(eval(v))
+        }
+    }
 
   private val validateInstances: List[(Type, List[(Type, Any)])] = {
     def instance[T, P](implicit P: c.WeakTypeTag[P], v: Validate[T, P]): (Type, Validate[T, P]) =

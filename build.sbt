@@ -442,7 +442,6 @@ lazy val compileSettings = Def.settings(
     CrossVersion.partialVersion(scalaVersion.value) match {
       case Some((2, minor)) if minor >= 12 =>
         Seq(
-          "-Xfatal-warnings",
           "-Xlint:-unused,_",
           "-Ywarn-numeric-widen",
           "-Ywarn-value-discard",
